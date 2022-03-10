@@ -1,0 +1,92 @@
+Server running at \\.\pipe\121c42f0-d33e-4fac-bd7b-e27cf47152da
+Mongoose default connection open
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m18.345 ms - 0[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m23.150 ms - 0[0m
+[0mOPTIONS /social/userLoginForSocialMedia [32m204 [0m34.657 ms - 0[0m
+Catch in usersignup api Error: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters
+{}
+Catch in usersignup api Error: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters
+[0mPOST /social/getPostsByUserId [32m200 [0m29.009 ms - 90[0m
+[0mPOST /social/getFeelingActivity [32m200 [0m7.708 ms - 90[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/userLoginForSocialMedia [32m200 [0m31.345 ms - 341[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/getFeelingActivity [32m200 [0m15.042 ms - 3441[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m49.529 ms - 49[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/getFeelingActivity [32m200 [0m16.373 ms - 3441[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m10.863 ms - 49[0m
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m6.888 ms - 0[0m
+[0mOPTIONS /social/getUsernameForTag [32m204 [0m5.698 ms - 0[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m6.724 ms - 0[0m
+{ userId: '613483a6c803263cdc9b81a6', username: '' }
+
+[0mOPTIONS /social/fetchMyFollowsDetails [32m204 [0m12.681 ms - 0[0m
+[0mOPTIONS /social/fetchUserImage [32m204 [0m20.992 ms - 0[0m
+50
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/getUsernameForTag [32m200 [0m50.375 ms - 7451[0m
+[0mPOST /social/getFeelingActivity [32m200 [0m15.158 ms - 3441[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m8.765 ms - 49[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/fetchMyFollowsDetails [32m200 [0m11.675 ms - 185[0m
+[0mPOST /social/UploadProfilePic [32m200 [0m8346.835 ms - 160[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m3.063 ms - 0[0m
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m3.080 ms - 0[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m8.672 ms - 49[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/getFeelingActivity [32m200 [0m10.557 ms - 3441[0m
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m2.903 ms - 0[0m
+[0mOPTIONS /social/getUsernameForTag [32m204 [0m1.663 ms - 0[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m4.081 ms - 0[0m
+[0mOPTIONS /social/fetchUserImage [32m204 [0m3.610 ms - 0[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/getFeelingActivity [32m200 [0m18.378 ms - 3441[0m
+[0mOPTIONS /social/fetchMyFollowsDetails [32m204 [0m2.889 ms - 0[0m
+{ userId: '613483a6c803263cdc9b81a6', username: '' }
+
+50
+[0mPOST /social/getUsernameForTag [32m200 [0m23.440 ms - 7442[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/getPostsByUserId [32m200 [0m5.845 ms - 49[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/fetchMyFollowsDetails [32m200 [0m8.788 ms - 185[0m
+[0mOPTIONS /social/group/fetchUserAllGroups [32m204 [0m4.095 ms - 0[0m
+[0mOPTIONS /social/group/fetchUserAllGroups [32m204 [0m1.744 ms - 0[0m
+[0mPOST /social/group/fetchUserAllGroups [32m200 [0m11.130 ms - 60[0m
+[0mPOST /social/group/fetchUserAllGroups [32m200 [0m5.463 ms - 60[0m
+[0mOPTIONS /social/group/fetchMyPageDetails [32m204 [0m3.716 ms - 0[0m
+[0mOPTIONS /social/group/fetchAllPages [32m204 [0m2.088 ms - 0[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/group/fetchMyPageDetails [32m200 [0m9.728 ms - 100[0m
+[0mPOST /social/group/fetchAllPages [32m200 [0m8.859 ms - 59[0m
+[0mPOST /social/group/fetchAllPages [32m200 [0m6.384 ms - 59[0m
+[0mOPTIONS /social/getUsernameForTag [32m204 [0m1.920 ms - 0[0m
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m11.191 ms - 0[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m2.283 ms - 0[0m
+[0mOPTIONS /social/fetchUserImage [32m204 [0m2.322 ms - 0[0m
+{ userId: '613483a6c803263cdc9b81a6', username: '' }
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mOPTIONS /social/fetchMyFollowsDetails [32m204 [0m3.308 ms - 0[0m
+
+[0mOPTIONS /social/fetchMyFollowsDetails [32m204 [0m8.256 ms - 0[0m
+50
+[0mPOST /social/getUsernameForTag [32m200 [0m31.677 ms - 7442[0m
+[0mPOST /social/getFeelingActivity [32m200 [0m35.182 ms - 3441[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/getPostsByUserId [32m200 [0m6.209 ms - 49[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/fetchMyFollowsDetails [32m200 [0m7.609 ms - 185[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/fetchMyFollowsDetails [32m200 [0m6.980 ms - 185[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m2.485 ms - 0[0m
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m2.307 ms - 0[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/getPostsByUserId [32m200 [0m8.332 ms - 49[0m
+[0mPOST /social/getFeelingActivity [32m200 [0m10.062 ms - 3441[0m
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m2.959 ms - 0[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m2.400 ms - 0[0m
+{ userId: '613483a6c803263cdc9b81a6' }
+[0mPOST /social/getPostsByUserId [32m200 [0m7.423 ms - 49[0m
+[0mPOST /social/getFeelingActivity [32m200 [0m10.060 ms - 3441[0m

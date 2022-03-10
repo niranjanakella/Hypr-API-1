@@ -1,0 +1,40 @@
+Server running at \\.\pipe\4e1ee87d-3d21-4e1f-aa64-456eda7b1c91
+Mongoose default connection open
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m53.131 ms - 0[0m
+[0mOPTIONS /social/userLoginForSocialMedia [32m204 [0m51.037 ms - 0[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m2.440 ms - 0[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/userLoginForSocialMedia [32m200 [0m60.535 ms - 336[0m
+{}
+Catch in usersignup api Error: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters
+[0mPOST /social/getFeelingActivity [32m200 [0m8.729 ms - 90[0m
+Catch in usersignup api Error: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters
+[0mPOST /social/getPostsByUserId [32m200 [0m2.917 ms - 90[0m
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m2.408 ms - 0[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m2.190 ms - 0[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/getFeelingActivity [32m200 [0m16.424 ms - 3441[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m11.855 ms - 1705[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m2.508 ms - 0[0m
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m2.483 ms - 0[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m7.491 ms - 1705[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/getFeelingActivity [32m200 [0m10.472 ms - 3441[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m6.582 ms - 1705[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/getFeelingActivity [32m200 [0m11.277 ms - 3441[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m8.094 ms - 1705[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mOPTIONS /social/group/fetchgrouppostByUserId [32m204 [0m5.554 ms - 0[0m
+[0mOPTIONS /social/group/fetchgrouppostByUserId [32m204 [0m5.963 ms - 0[0m
+[0mPOST /social/getFeelingActivity [32m200 [0m14.456 ms - 3441[0m
+[0mOPTIONS /social/group/fetchpagepostByUserId [32m204 [0m2.113 ms - 0[0m
+[0mOPTIONS /social/group/fetchpagepostByUserId [32m204 [0m2.531 ms - 0[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/group/fetchgrouppostByUserId [32m200 [0m10.269 ms - 49[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/group/fetchgrouppostByUserId [32m200 [0m17.105 ms - 49[0m
+[0mPOST /social/group/fetchpagepostByUserId [32m200 [0m14.949 ms - 49[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/group/fetchpagepostByUserId [32m200 [0m6.083 ms - 49[0m

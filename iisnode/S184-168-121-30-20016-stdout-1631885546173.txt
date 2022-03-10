@@ -1,0 +1,3 @@
+Server running at \\.\pipe\55b98f92-2457-46ae-ac95-1cc9739241a6
+Mongoose default connection open
+[0mGET /.env [33m404 [0m16.181 ms - 2501[0m

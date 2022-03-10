@@ -1,0 +1,4 @@
+Server running at \\.\pipe\7dd91253-a9c1-409d-aa8d-c1d861806d2c
+Mongoose default connection open
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m16.566 ms - 0[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m19.991 ms - 0[0m

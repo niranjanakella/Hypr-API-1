@@ -1,0 +1,39 @@
+Server running at \\.\pipe\6a43aeaf-ca1b-4a52-8f54-10abb5dc816e
+Mongoose default connection open
+[0mOPTIONS /social/userLoginForSocialMedia [32m204 [0m68.162 ms - 0[0m
+[0mOPTIONS /social/getFeelingActivity [32m204 [0m71.758 ms - 0[0m
+[0mOPTIONS /social/getPostsByUserId [32m204 [0m152.995 ms - 0[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+{}
+Catch in usersignup api Error: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters
+[0mPOST /social/getFeelingActivity [32m200 [0m7.291 ms - 90[0m
+[0mPOST /social/userLoginForSocialMedia [32m200 [0m56.976 ms - 336[0m
+Catch in usersignup api Error: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters
+[0mPOST /social/getPostsByUserId [32m200 [0m2.492 ms - 90[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/getFeelingActivity [32m200 [0m53.773 ms - 3441[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m82.678 ms - 1705[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/getFeelingActivity [32m200 [0m11.893 ms - 3441[0m
+[0mOPTIONS /social/group/fetchgrouppostByUserId [32m204 [0m31.262 ms - 0[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m8.165 ms - 1705[0m
+[0mOPTIONS /social/group/fetchpagepostByUserId [32m204 [0m19.074 ms - 0[0m
+[0mOPTIONS /social/group/fetchgrouppostByUserId [32m204 [0m8.129 ms - 0[0m
+[0mOPTIONS /social/group/fetchpagepostByUserId [32m204 [0m18.303 ms - 0[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/getPostsByUserId [32m200 [0m8.480 ms - 1705[0m
+[0mPOST /social/getFeelingActivity [32m200 [0m17.735 ms - 3441[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/getPostsByUserId [32m200 [0m7.171 ms - 1705[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/group/fetchgrouppostByUserId [32m200 [0m77.401 ms - 49[0m
+[0mPOST /social/getFeelingActivity [32m200 [0m29.564 ms - 3441[0m
+[0mPOST /social/group/fetchpagepostByUserId [32m200 [0m39.626 ms - 49[0m
+[0mPOST /social/getPostsByUserId [32m200 [0m47.120 ms - 1705[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/group/fetchgrouppostByUserId [32m200 [0m8.836 ms - 49[0m
+[0mPOST /social/group/fetchpagepostByUserId [32m200 [0m7.604 ms - 49[0m
+{ userId: '610f7a38c438ab3570f4a2db' }
+[0mPOST /social/getFeelingActivity [32m200 [0m14.023 ms - 3441[0m

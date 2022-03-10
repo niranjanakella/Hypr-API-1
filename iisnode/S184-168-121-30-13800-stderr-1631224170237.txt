@@ -1,0 +1,18 @@
+(node:13800) Warning: Accessing non-existent property 'MongoError' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13800) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(node:13800) UnhandledPromiseRejectionWarning: ReferenceError: SocialPostData is not defined
+    at C:\HypeWeb-Modules\Hypr-Backend\Hypr-Backend\routes\socialRoutes\socialPost.routes.js:2627:39
+    at processTicksAndRejections (internal/process/task_queues.js:93:5)
+(node:13800) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)
+(node:13800) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+(node:13800) UnhandledPromiseRejectionWarning: ReferenceError: SocialPostData is not defined
+    at C:\HypeWeb-Modules\Hypr-Backend\Hypr-Backend\routes\socialRoutes\socialPost.routes.js:2627:39
+    at runMicrotasks (<anonymous>)
+    at processTicksAndRejections (internal/process/task_queues.js:93:5)
+(node:13800) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 2)
+(node:13800) UnhandledPromiseRejectionWarning: ReferenceError: SocialPostData is not defined
+    at C:\HypeWeb-Modules\Hypr-Backend\Hypr-Backend\routes\socialRoutes\socialPost.routes.js:2627:39
+    at runMicrotasks (<anonymous>)
+    at processTicksAndRejections (internal/process/task_queues.js:93:5)
+(node:13800) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 3)
