@@ -78,10 +78,8 @@ router.route("/signup")
     })
 
     .post((req, res, next) => {
-
-        
         try {
-     
+            console.log(req.body);
             // return
 
             let fname = userFunctions.santizeInput(req.body.firstName),
@@ -110,7 +108,7 @@ router.route("/signup")
                 // peopleId = userFunctions.santizeInput(req.body.peopleId),
                 msg = "",
                 errorArray = [];
-            
+            console.log(fname, lname, email, phone, uname, country, dob, age, password, confirmPassword);
             // if (fname != null && fname != '' && lname != null && lname != '' && email != null && email != '' && phone != null && phone != ''
             //     && uname != null && uname != '' && country != null && country != '' && dob != null && dob != ''
             //     && age != null && age != '' && password != null && password != '' && confirmPassword != null
@@ -150,7 +148,7 @@ router.route("/signup")
                 let accessToken = sha1(key);
                 //var ReferCodeBy = req.body.refCode
                 // console.log(ReferCodeBy)
-
+                let generateOtp = Math.floor(Math.random() * 999999) + 10000;
                 var Refcode = 'HYPR' + Math.floor(Math.random() * 899999 + 1000000);
                 let options = {
                     f_name: fname,
@@ -167,7 +165,7 @@ router.route("/signup")
                     social_type: social_type,
                     f_password: password,
                     accessToken: accessToken,
-                    otp: 12345,
+                    otp: generateOtp,
                     ReferCodeBy: req.body.refCode,
                     RefCode: Refcode,
                     status: true,
@@ -285,8 +283,8 @@ router.route("/signup")
                         }
                     })
                 } else {
-                    // UsersSchema.findOne({ RefCode: req.body.refCode }, async (err1, isRefCode) => {
-                    //     if (isRefCode != null) {
+                    UsersSchema.findOne({ RefCode: req.body.refCode }, async (err1, isRefCode) => {
+                        if (isRefCode != null) {
                             UsersSchema.findOne({ f_email: email }, async (err1, res1) => {
                                 console.log(res1);
                                 if (res1 == null) {
@@ -351,14 +349,14 @@ router.route("/signup")
                                 }
 
                             })
-                    //     } else {
-                    //         res.json({
-                    //             status: false,
-                    //             code: "E111",
-                    //             msg: "Invalid Refferal Code!"
-                    //         })
-                    //     }
-                    // })
+                        } else {
+                            res.json({
+                                status: false,
+                                code: "E111",
+                                msg: "Invalid Refferal Code!"
+                            })
+                        }
+                    })
                 }
                 // }
                 // })
@@ -380,8 +378,7 @@ router.route("/signup")
 
 
         } catch (e) {
-            alert(JSON.stringify(genericErrorMessage))
-            // console.log("Catch in usersignup api " + e);
+            console.log("Catch in usersignup api " + e);
             res.json({
                 status: false,
                 code: "E109",
@@ -389,6 +386,7 @@ router.route("/signup")
             })
         }
     })
+
 
 
 router.route("/verifyMobileOtp")
@@ -496,6 +494,88 @@ router.route("/verifyMobileOtp")
         }
     })
 
+
+router.route("/resendMobileOtp")
+    .get((req, res, next) => {
+        res.json({
+            status: false,
+            code: "E131"
+        })
+    })
+
+    .post((req, res, next) => {
+        try {
+
+            let _id = userFunctions.santizeInput(req.body._id);
+            let otp = userFunctions.santizeInput(req.body.otp);
+            let not_clean_otp = req.body.otp;
+            
+            if (_id != null && otp != null) {
+                
+
+                UsersSchema.find({
+                    _id: mongoose.Types.ObjectId(_id),
+                }, {
+                    __v: 0,
+                    createdAt: 0,
+                    updatedAt: 0
+                }, (err, result) => {
+                    
+                    if (err) {
+                        console.log("Error in user.find login " + err);
+                        res.json({
+                            status: false,
+                            msg: userFunctions.mongooseErrorHandle(err),
+                            code: "E130"
+                        });
+                    } else if (result == null || result == undefined || result == '') {
+                        res.json({
+                            status: false,
+                            msg: "There is no account associated with this E-mail",
+                            code: "E123"
+                        });
+                    } else {
+                        
+                        var payload = {otp:not_clean_otp};
+                        UsersSchema.findByIdAndUpdate(result[0]._id, {$set:payload}
+                            ,(err,updatedDocs)=>{
+                            
+                            if (err) {
+                                console.log("Error in user.findByIdAndUpdate login " + err);
+                                res.json({
+                                    status: false,
+                                    msg: userFunctions.mongooseErrorHandle(err),
+                                    code: "E130"
+                                });
+                            } else {
+                                res.json({
+                                    status: true,
+                                    msg: 'Successfully resend new OTP',
+                                    data: ''
+                                });
+                            }
+
+                        });
+
+
+                    
+                    }
+                })
+
+            }
+
+
+
+        } catch (e) {
+            console.log("Catch in user resend otp api " + e);
+            res.json({
+                status: false,
+                code: "E109",
+                msg: genericErrorMessage
+            })
+        }
+    })
+
 router.route("/signin")
     .get((req, res, next) => {
         res.json({
@@ -511,6 +591,7 @@ router.route("/signin")
             let password = userFunctions.santizeInput(req.body.password);
             let appID = userFunctions.santizeInput(req.body.appID);
             let provider = userFunctions.santizeInput(req.body.f_provider);
+            let generateOtp = Math.floor(Math.random() * 99999) + 10000;
             // if (appID !== undefined && provider != undefined) {
             //     UsersSchema.find({
             //         f_email: email,
@@ -556,11 +637,13 @@ router.route("/signin")
                             //generate new access token
                             let key = Date.now() + result[0].email;
                             let accessToken = sha1(key);
+                            
                             let options = {
-                                // accessToken: accessToken,
+                                otp:generateOtp,                                
                                 loginAt: Date.now()
                             };
-
+                           
+                            
                             UsersSchema.findByIdAndUpdate(result[0]._id, {
                                 $set: options
                             }, {
@@ -583,6 +666,34 @@ router.route("/signin")
                                         code: "E130"
                                     });
                                 } else {
+                                    // ready for email otp
+                                    // var mailOptions = {
+                                    //     from: "Hypr" + process.env.EMAILING_ACCOUNT, // sender address
+                                    //     to: email,                                        
+                                    //     subject: 'Hypr One Time Password',
+                                    //     html: "Your OTP is "
+                                    // }
+                                    // transporter.sendMail(mailOptions, function (error, info) {
+                                    //     if (error) {
+                                    //         console.log('Error: ' + error);
+                                    //         console.log('Error in forgot pass email sending' + error);
+                                    //         res.json({
+                                    //             status: false,
+                                    //             msg: 'Email not sent',
+                                    //             code: 'E110'
+                                    //         });
+                                    //     } else {
+                                    //         console.log('Email sent: ' + info.response);
+                                    //         res.json({
+                                    //             status: true,
+                                    //             msg: 'Email sent successfuly',
+                                    //             code: 'S405'
+                                    //         });
+                                    //     }
+                                    // });
+
+
+
                                     res.json({
                                         status: true,
                                         msg: 'User data fetched successfully..',

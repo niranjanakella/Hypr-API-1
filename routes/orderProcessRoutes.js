@@ -12,10 +12,12 @@ router.route("/addToShoppingCart")
         //var categoryType = await catTypeSchema.find();
         console.log(req.body);
         try {
-            let _id = userFunctions.santizeInput(req.body.userId);
+            let _id  = userFunctions.santizeInput(req.body.userId);
             let ProductId = userFunctions.santizeInput(req.body.ProductId);
+            
             // let userId = userFunctions.santizeInput(req.body.userId);
             //let password = userFunctions.santizeInput(req.body.password);
+            console.warn(mongoose.Types.ObjectId(_id));
             if (_id != null) {
                 //fetch the username and password from db and check if they match
 
@@ -41,73 +43,73 @@ router.route("/addToShoppingCart")
                             msg: "There is no account associated with this Userid, Pls login first!",
                             code: "E123"
                         });
-                    } else {
+                    } else {    
 
-                        CartSchema.find({ f_ProductId: ProductId, f_buyerId: _id }, async (err, result1) => {
-                            // console.log(err);
-                            console.log(result1.length);
-                            // return
-                            // res.send(result)
-                            if (result1.length == 0) {
-                                var ProductDetails = await productSchema.findOne({ _id: ProductId });
+
+                        CartSchema.find({f_ProductId: ProductId, f_buyerId: _id},async (err,cart_result)=>{
+                            if(cart_result.length == 0){
+                                // var ProductDetails = await productSchema.findOne({ _id: ProductId });
                                 var UserDetails = await UsersSchema.findOne({ _id: _id });
                                 var options = {
-                                    "f_sellerId": ProductDetails.f_sellerId,
-                                    "f_ProductId": ProductDetails._id,
-                                    "f_ProductPrice":req.body.product_price,// ProductDetails.f_product_price,
-                                    "f_OfferPrice":req.body.product_price,// ProductDetails.f_product_offer_price,
-                                    "f_productCode": ProductDetails.f_productCode,
-                                    "f_ServiceName": ProductDetails.f_productname,
-                                    "f_sellerName": ProductDetails.f_sellerName,
-                                    "f_ProductImg1": ProductDetails.f_img1,
-                                    "f_categoryTypeName": ProductDetails.f_categoryTypeName,
-                                    "f_categoryTypeId": ProductDetails.f_categoryTypeId,
-                                    "f_categoryName": ProductDetails.f_catLevel1Name,
-                                    "f_categoryId": ProductDetails.f_catLevel1,
-                                    "f_itemQuantity": 1,
-                                    "f_buyerId": UserDetails._id,
-                                    "f_buyerName": UserDetails.f_name + ' ' + UserDetails.l_name,
-                                    "f_totalAmount": parseInt(ProductDetails.f_product_offer_price),
-                                    "f_variantName" : req.body.variantName,
-                                    "f_createdDate": new Date,
-                                    "f_coupon": "",
-                                    "f_couponPrice": 0,
-                                    "f_couponType": "",
-                                    "f_couponUse": false,
-                                    "f_discount": 0,
+                                                // "f_sellerId": ProductDetails.f_sellerId,
+                                                "f_ProductId": req.body.ProductId,
+                                                "f_ProductPrice":req.body.product_price,// ProductDetails.f_product_price,
+                                                // "f_OfferPrice":req.body.product_price,// ProductDetails.f_product_offer_price,
+                                                "f_productCode": req.body.product_code,
+                                                // "f_ServiceName": ProductDetails.f_productname,
+                                                // "f_sellerName": ProductDetails.f_sellerName,
+                                                "f_ProductImg1": req.body.product_image,
+                                                // "f_categoryTypeName": ProductDetails.f_categoryTypeName,
+                                                // "f_categoryTypeId": ProductDetails.f_categoryTypeId,
+                                                // "f_categoryName": ProductDetails.f_catLevel1Name,
+                                                // "f_categoryId": ProductDetails.f_catLevel1,
+                                                "f_itemQuantity": 1,
+                                                "f_buyerId": UserDetails._id,
+                                                "f_buyerName": UserDetails.f_name + ' ' + UserDetails.l_name,
+                                                "f_totalAmount":req.body.product_price,
+                                                "f_variantName" : req.body.variantName,
+                                                "f_createdDate": new Date,
+                                                // "f_coupon": "",
+                                                // "f_couponPrice": 0,
+                                                // "f_couponType": "",
+                                                // "f_couponUse": false,
+                                                // "f_discount": 0,
+                                            }
+                             CartSchema.create(options, (err, insertRes) => {
+                                if (err) {
+                                    console.log("Err in inserting add to cart " + err);
+                                    res.json({
+                                        status: false,
+                                        code: "E111",
+                                        msg: userFunctions.mongooseErrorHandle(err)
+                                    })
+                                } else if (insertRes != null && insertRes != '') {
+                                    //send email otp
+                                    // if (result == true) {
+                                    res.json({
+                                        status: true,
+                                        code: "S405",
+                                        msg: "Item added in your cart!",
+                                        id: insertRes._id,
+                                    })
                                 }
-
-                                CartSchema.create(options, (err, insertRes) => {
-                                    if (err) {
-                                        console.log("Err in inserting add to cart " + err);
-                                        res.json({
-                                            status: false,
-                                            code: "E111",
-                                            msg: userFunctions.mongooseErrorHandle(err)
-                                        })
-                                    } else if (insertRes != null && insertRes != '') {
-                                        //send email otp
-                                        // if (result == true) {
-                                        res.json({
-                                            status: true,
-                                            code: "S405",
-                                            msg: "Item added in your cart!",
-                                            id: insertRes._id,
-                                        })
-                                    }
-                                })
+                            })
                             }
-                            else {
-                                res.json({
-                                    status: false,
-                                    msg: "Item already exists in the cart!",
-                                    data: []
-                                });
+                             else {
+                                    res.json({
+                                        status: false,
+                                        msg: "Item already exists in the cart!",
+                                        data: []
+                                    });
                             }
 
                         })
 
+                    
+
                     }
+                }).catch((error)=>{
+                    console.warn(error);
                 })
 
             }
@@ -138,6 +140,7 @@ router.route("/CartQuantityIncrease")
         try {
             let _id = userFunctions.santizeInput(req.body.userId);
             let cardId = userFunctions.santizeInput(req.body.cartId);
+            console.log(cardId)
             //  let ProductId = userFunctions.santizeInput(req.body.ProductId);
             // let userId = userFunctions.santizeInput(req.body.userId);
             //let password = userFunctions.santizeInput(req.body.password);
@@ -168,11 +171,11 @@ router.route("/CartQuantityIncrease")
                         });
                     } else {
                         var CartDetails = await CartSchema.findOne({ _id: cardId });
-                        console.log(CartDetails);
+                        console.warn(CartDetails);
                         var newQuantity = parseInt(CartDetails.f_itemQuantity) + 1;
-                        var f_totalAmount = newQuantity * CartDetails.f_OfferPrice;
+                        var f_totalAmount = newQuantity * CartDetails.f_ProductPrice;
                         var options = {
-                            f_itemQuantity: newQuantity,
+                             f_itemQuantity: newQuantity,
                             f_totalAmount: f_totalAmount,
                             updatedAt: new Date
                         }
@@ -262,7 +265,7 @@ router.route("/CartQuantityDecrease")
                         var CartDetails = await CartSchema.findOne({ _id: cardId });
                         console.log(CartDetails);
                         var newQuantity = parseInt(CartDetails.f_itemQuantity) - 1;
-                        var f_totalAmount = newQuantity * CartDetails.f_OfferPrice;
+                        var f_totalAmount = newQuantity * CartDetails.f_ProductPrice;
                         var options = {
                             f_itemQuantity: newQuantity,
                             f_totalAmount: f_totalAmount,

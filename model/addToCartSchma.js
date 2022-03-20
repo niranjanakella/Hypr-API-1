@@ -37,4 +37,4 @@ require('../shared/variables');
   //  { collection: "t_product" });
   },{collection:"t_CartSummary"});
 
-module.exports = CartSchema = mongoose.model("t_CartSummary", addToCartNewSchema);
+module.exports =CartSchema = mongoose.model("t_CartSummary", addToCartNewSchema);

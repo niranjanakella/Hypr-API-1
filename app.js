@@ -10,11 +10,12 @@ const fileUpload = require('express-fileupload');
 var accountRouter = require('./routes/accountRoutes');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var productRouter = require('./routes/productRoutes')
-var orderProcessRouter = require('./routes/orderProcessRoutes')
-var socialRouter = require('./routes/socialRoutes/socialPost.routes')
-var groupRouter = require('./routes/socialRoutes/group.routes')
-var payPal = require('./routes/payPal')
+var productRouter = require('./routes/productRoutes');
+var orderProcessRouter = require('./routes/orderProcessRoutes');
+var socialRouter = require('./routes/socialRoutes/socialPost.routes');
+var groupRouter = require('./routes/socialRoutes/group.routes');
+var payPal = require('./routes/payPal');
+var cjRouter = require('./routes/api/cj');
 require('./shared/variables')
 // const catTypeSchema = require('./model/catTypeModel')
 var app = express();
@@ -101,6 +102,7 @@ app.use('/', indexRouter);
 app.use('/', productRouter);
 app.use('/', orderProcessRouter)
 app.use('/', payPal)
+app.use('/', cjRouter)
 app.use('/user', accountRouter)
 app.use('/users', usersRouter);
 app.use('/social', socialRouter);

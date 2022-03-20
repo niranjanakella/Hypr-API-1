@@ -46,7 +46,7 @@ const productModel = new mongoose.Schema({
     best_selling: Boolean,
     season_top_pic: Boolean,
     trending_offer: Boolean,
-    variants: Array,
+    variants: String,
     createdAt: Date,
     updatedAt: Date ,
     //  { collection: "t_product" });

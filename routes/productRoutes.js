@@ -75,8 +75,6 @@ router.route("/getCategoryType")
     })
 router.route("/getCategory")
     .get((req, res, next) => {
-
-        console.warn(req);
         res.json({
             status: false,
             code: "E131"

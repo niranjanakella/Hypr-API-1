@@ -5,7 +5,7 @@
 //     .catch(err => console.log(err));
 
     var MongoClient = require('mongodb').MongoClient;
-MongoClient.connect('mongodb://localhost:27017/', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
+MongoClient.connect('mongodb://localhost', { useNewUrlParser: true, useUnifiedTopology: true }, function (err, client) {
   if (err) throw err;
   var db = client.db('hyprDB');
   global.db = db
