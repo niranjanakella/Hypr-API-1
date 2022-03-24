@@ -43,6 +43,8 @@ app.group("/cj/api/v1", () => {
 
     app.get("/get-products", ApiController.getProducts);
     app.get("/get-variants", ApiController.getVariants);
+    app.post("/create-order", ApiController.createOrder);
+    
 });
 
 module.exports = app.router;
