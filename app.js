@@ -25,6 +25,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
+
+app.get("/otp", function(req, res) {  
+  res.render("./templates/otpEmail",{name:'John Edcel Zenarosa',link:'sample',toemail:'sample@gmail.com'});
+});
+    
 app.use(express.json());
 
 // // app.use(express.json());

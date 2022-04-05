@@ -12,6 +12,8 @@ require('../shared/variables');
   f_ProductId: String,
   f_ProductPrice: String,
   f_OfferPrice: String,
+  f_ProductPriceCny: String,
+  f_OfferPriceCny: String,
   f_productCode: String,
   f_ServiceName: String,
   f_sellerName: String,
@@ -24,6 +26,7 @@ require('../shared/variables');
   f_buyerId: String,
   f_buyerName: String,
   f_totalAmount: String,
+  f_totalAmountCny: String,
   f_createdDate: String,
   f_coupon: String,
   f_couponPrice: String,
@@ -34,6 +37,7 @@ require('../shared/variables');
   status: Boolean,
   createdAt: Date,
   updatedAt: Date,
+  f_freightCalculation:Array
   //  { collection: "t_product" });
   },{collection:"t_CartSummary"});
 

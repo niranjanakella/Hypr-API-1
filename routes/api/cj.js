@@ -43,7 +43,16 @@ app.group("/cj/api/v1", () => {
 
     app.get("/get-products", ApiController.getProducts);
     app.get("/get-variants", ApiController.getVariants);
+
+    // shopping
     app.post("/create-order", ApiController.createOrder);
+    app.get("/list-order", ApiController.listOrder);
+
+    // logistics
+    app.post("/freight-calculate", ApiController.FreightCalculate);
+    app.get("/countries", ApiController.getCountryCode);
+    app.get("/logistics", ApiController.getLogistics);
+
     
 });
 

@@ -36,11 +36,20 @@ AWS.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
+// global.transporter = nodemailer.createTransport({
+//     SES: new AWS.SES({
+//         apiVersion: process.env.SES_API_VERSION,
+//         region: process.env.SES_REGION
+//     })
+// });
+
 global.transporter = nodemailer.createTransport({
-    SES: new AWS.SES({
-        apiVersion: process.env.SES_API_VERSION,
-        region: process.env.SES_REGION
-    })
+    service: 'gmail.com',
+    host: 'smtp.gmail.com',
+    auth: {
+        user: 'developer01000@gmail.com',
+        pass: '01000webdeveloper'
+    }
 });
 global.sns = new AWS.SNS({
     apiVersion: process.env.SNS_API_VERSION,

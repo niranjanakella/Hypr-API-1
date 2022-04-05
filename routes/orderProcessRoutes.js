@@ -44,30 +44,35 @@ router.route("/addToShoppingCart")
                     } else {
 
                         CartSchema.find({ f_ProductId: ProductId, f_buyerId: _id }, async (err, result1) => {
-                            // console.log(err);
+                            console.log(err);
                             console.log(result1.length);
                             // return
                             // res.send(result)
+                            if(!err){
+
+
+                            
                             if (result1.length == 0) {
-                                var ProductDetails = await productSchema.findOne({ _id: ProductId });
+                                
                                 var UserDetails = await UsersSchema.findOne({ _id: _id });
                                 var options = {
-                                    "f_sellerId": ProductDetails.f_sellerId,
-                                    "f_ProductId": ProductDetails._id,
+                                    // "f_sellerId": ProductDetails.f_sellerId,
+                                    "f_ProductId": req.body.ProductId,
                                     "f_ProductPrice":req.body.product_price,// ProductDetails.f_product_price,
                                     "f_OfferPrice":req.body.product_price,// ProductDetails.f_product_offer_price,
-                                    "f_productCode": ProductDetails.f_productCode,
-                                    "f_ServiceName": ProductDetails.f_productname,
-                                    "f_sellerName": ProductDetails.f_sellerName,
-                                    "f_ProductImg1": ProductDetails.f_img1,
-                                    "f_categoryTypeName": ProductDetails.f_categoryTypeName,
-                                    "f_categoryTypeId": ProductDetails.f_categoryTypeId,
-                                    "f_categoryName": ProductDetails.f_catLevel1Name,
-                                    "f_categoryId": ProductDetails.f_catLevel1,
+                                    "f_productCode": req.body.product_code,
+                                    // "f_ServiceName": ProductDetails.f_productname,
+                                    // "f_sellerName": ProductDetails.f_sellerName,
+                                    "f_ProductImg1":req.body.product_image,
+                                    // "f_categoryTypeName": ProductDetails.f_categoryTypeName,
+                                    // "f_categoryTypeId": ProductDetails.f_categoryTypeId,
+                                    // "f_categoryName": ProductDetails.f_catLevel1Name,
+                                    // "f_categoryId": ProductDetails.f_catLevel1,
+                                    
                                     "f_itemQuantity": 1,
-                                    "f_buyerId": UserDetails._id,
-                                    "f_buyerName": UserDetails.f_name + ' ' + UserDetails.l_name,
-                                    "f_totalAmount": parseInt(ProductDetails.f_product_offer_price),
+                                    "f_buyerId": req.body.userId,
+                                    // "f_buyerName": UserDetails.f_name + ' ' + UserDetails.l_name,
+                                    "f_totalAmount": parseInt(req.body.product_price),
                                     "f_variantName" : req.body.variantName,
                                     "f_createdDate": new Date,
                                     "f_coupon": "",
@@ -75,6 +80,7 @@ router.route("/addToShoppingCart")
                                     "f_couponType": "",
                                     "f_couponUse": false,
                                     "f_discount": 0,
+                                    "f_freightCalculation": req.body.freightCalculation,
                                 }
 
                                 CartSchema.create(options, (err, insertRes) => {
@@ -104,6 +110,9 @@ router.route("/addToShoppingCart")
                                     data: []
                                 });
                             }
+                        }else{
+                            console.log(err);
+                        }
 
                         })
 
@@ -797,7 +806,10 @@ router.route("/checkoutConfirmation")
                         var order_id = await counterSchema.findOneAndUpdate({ _id: "order_id" }, {
                             $inc: { sequence: 1 }
                         }, { useFindAndModify: false });
-                        console.log(order_id);
+
+                        
+                        
+                        
                         var options = {
                             f_orderDate: new Date,
                             f_displayOrderId: order_id.sequence,
@@ -902,9 +914,15 @@ router.route("/checkoutConfirmation")
                                     // const email_social_media = await db.collection('t_seller_images').find({ f_type: "SME", f_show_image: true, f_published: true }).sort({ f_sort_no: 1 }).toArray();
                                     // var i;
                                     let text = ``;
+
+
+                                    
                                     // for (i = 0; i < email_social_media.length; i++) {
                                     //     text += `<a href="${email_social_media[i].f_url}"><img alt="${email_social_media[i].f_alt_text}" src="http://eskillsellerdocs.cstechns.com/SellerDocuments/sellerDocsImg/${email_social_media[i].f_image_name}"/></a>`
                                     // }
+
+
+
                                     var mailOptions = {
                                         from: 'alamarbaj1920@gmail.com',//mailfrom,
                                         to: UserDetails.f_email,//'ati@cstech.in',
@@ -1651,7 +1669,7 @@ router.route("/addNewAddress")
                     password: 0,
                     updatedAt: 0
                 }, async (err, result) => {
-                    // console.log(result);
+                    console.log(result);
                     if (err) {
                         console.log("Error in user.find login " + err);
                         res.json({
@@ -1667,7 +1685,12 @@ router.route("/addNewAddress")
                         });
                     } else {
 
+
+                        
+
+
                         await UsersSchema.updateOne({ _id: mongoose.Types.ObjectId(_id) }, {
+
                             $push: {
                                 f_shipping_Address: [{
                                     id: mongoose.Types.ObjectId(),
@@ -1680,7 +1703,9 @@ router.route("/addNewAddress")
                                     state: req.body.state,
                                     landmark: req.body.landmark,
                                     AlternativePhone: req.body.AlternativePhone,
-                                    country_code: req.body.country_code
+                                    country_code: req.body.countryCode,
+                                    country: req.body.country,
+                                    isSelected: (result.filter((filter_result)=>filter_result.isSelected ==true ).length > 0 ? false : true)
                                 }]
                             }
 
@@ -1720,6 +1745,122 @@ router.route("/addNewAddress")
 
 
 
+
+
+
+    
+router.route("/updateAddress")
+.get((req, res, next) => {
+    res.json({
+        status: false,
+        code: "E131"
+    })
+}).post(async (req, res) => {
+    //var categoryType = await catTypeSchema.find();
+    
+    try {
+        console.log(req.body);
+        let _id = userFunctions.santizeInput(req.body.userId);
+        let address_id = userFunctions.santizeInput(req.body.addressId);
+        let address_index =req.body.index;
+        // let f_buyerId = userFunctions.santizeInput(req.body.f_buyerId);
+        // let userId = userFunctions.santizeInput(req.body.userId);
+        //let password = userFunctions.santizeInput(req.body.password);
+        if (_id != null) {
+            //fetch the username and password from db and check if they match
+
+            UsersSchema.find({
+                _id: mongoose.Types.ObjectId(_id),
+            }, {
+                __v: 0,
+                createdAt: 0,
+                password: 0,
+                updatedAt: 0
+            }, async (err, result) => {
+             
+                if (err) {
+                    console.log("Error in user.find login " + err);
+                    res.json({
+                        status: false,
+                        msg: userFunctions.mongooseErrorHandle(err),
+                        code: "E130"
+                    });
+                } else if (result == null || result == undefined || result == '') {
+                    res.json({
+                        status: false,
+                        msg: "There is no account associated with this Userid, Pls login first!",
+                        code: "E123"
+                    });
+                } else {
+                    console.log('results',result[0].f_shipping_Address);
+
+                    result[0].f_shipping_Address.map( async (item,result_index)=>{
+                    
+                        await  UsersSchema.updateOne({_id: mongoose.Types.ObjectId(_id)}, {
+                            $set: {
+                                                                   
+                                    'f_shipping_Address.$[element].isSelected': false                               
+                            }
+                        },{
+                            arrayFilters: [ { "element.id":  mongoose.Types.ObjectId(item.id)} ]
+                        })
+                        
+                    })
+                 
+
+                    console.log('index',address_id)
+                    await UsersSchema.updateOne({ _id: mongoose.Types.ObjectId(_id)}, {
+                        $set: {
+                            
+                                "f_shipping_Address.$[element].name": req.body.name,
+                                'f_shipping_Address.$[element].mobile': req.body.mobile,
+                                'f_shipping_Address.$[element].pincode': req.body.pincode,
+                                'f_shipping_Address.$[element].location': req.body.location,
+                                'f_shipping_Address.$[element].address': req.body.address,
+                                'f_shipping_Address.$[element].city': req.body.city,
+                                'f_shipping_Address.$[element].state': req.body.state,
+                                'f_shipping_Address.$[element].landmark': req.body.landmark,
+                                'f_shipping_Address.$[element].AlternativePhone': req.body.AlternativePhone,
+                                'f_shipping_Address.$[element].country_code': req.body.country_code,
+                                'f_shipping_Address.$[element].country': req.body.country,
+                                'f_shipping_Address.$[element].isSelected': true
+                           
+                        },                       
+                    },{
+                        arrayFilters: [ { "element.id":  mongoose.Types.ObjectId(address_id)} ]
+                    })
+                    // if (ServiceReview.length > 0) {
+                    res.json({
+                        status: true,
+                        msg: "Successfully Updated your default address!",
+                    })
+                    // }
+                    // else {
+                    //     res.json({
+                    //         status: false,
+                    //         msg: "ServiceReview not Found!",
+                    //         data: ServiceReview
+                    //     })
+                    // }
+
+                }
+            })
+
+        }
+
+
+
+    } catch (e) {
+        console.log("Catch in usersignup api " + e);
+        res.json({
+            status: false,
+            code: "E109",
+            msg: genericErrorMessage
+        })
+    }
+
+
+})
 
 
 

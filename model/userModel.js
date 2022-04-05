@@ -43,6 +43,7 @@ let userNewSchema = new schema({
     updatedAt: Date,
     status: Boolean,
     f_wallet: Number,
+    verifiedDate: Date,
     f_shipping_Address:Array
     //  { collection: "t_product" });
     },{collection:"t_BuyerNode"});
