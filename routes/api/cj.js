@@ -46,6 +46,7 @@ app.group("/cj/api/v1", () => {
 
     // shopping
     app.post("/create-order", ApiController.createOrder);
+    app.post("/confirm-order", ApiController.confirmOrder);
     app.get("/list-order", ApiController.listOrder);
 
     // logistics

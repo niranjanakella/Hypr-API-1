@@ -923,36 +923,36 @@ router.route("/checkoutConfirmation")
 
 
 
-                                    var mailOptions = {
-                                        from: 'alamarbaj1920@gmail.com',//mailfrom,
-                                        to: UserDetails.f_email,//'ati@cstech.in',
-                                        cc: 'atti7466@gmail.com',
-                                        subject: 'Your order successfully Placed | Hypr',
-                                        html: Emailresult[0].f_mailmessage
-                                            .replace('{vendorurl}', '<a href="http://beta.hyprweb.com">Click Here</a>')
-                                            .replace('{orderdate}', new Date().toISOString().slice(0, 10))
-                                            .replace('{orderstatus}', 'Pending')
-                                            .replace('{user-name}', UserDetails.f_name)
-                                            .replace('{email-logo}', `<a href="http://beta.hyprweb.com/"><img height="80%" width="80%" src="http://beta.hyprweb.com/images/logos/Hypr-Logo.png"/></a>`)
-                                            .replace("{socialmedia}",)
-                                            .replace('Itsherskill', 'hypr')
-                                            .replace('Itsherway', 'hypr')
-                                            .replace('http://beta.hyprweb.com', '#')
-                                            .replace('http://beta.itsherskill.com/content/SellerPolicy', '#')
-                                            .replace('http://beta.itsherskill.com/customer-contactus', '#')
-                                            .replace('{copy-right}', '© 2021-2022 hypr.All rights reserved')
-                                            .replace('{mpname}', 'hypr')
-                                            .replace('{mpname}', 'hypr')
-                                            .replace('{mpname}', 'hypr')
-                                        // .replace('{email-payment-logo}', `<a href=" "><img src="http://eskillsellerdocs.cstechns.com/SellerDocuments/sellerDocsImg/${email_payment_logo[0].f_image_name}" width="560" alt=""></a>`)
-                                    };
-                                    transporter.sendMail(mailOptions, function (error, info) {
-                                        if (error) {
-                                            console.log(error);
-                                        } else {
-                                            console.log('Email sent: ' + info.response);
-                                        }
-                                    });
+                                    // var mailOptions = {
+                                    //     from: 'alamarbaj1920@gmail.com',//mailfrom,
+                                    //     to: UserDetails.f_email,//'ati@cstech.in',
+                                    //     cc: 'atti7466@gmail.com',
+                                    //     subject: 'Your order successfully Placed | Hypr',
+                                    //     html: Emailresult[0].f_mailmessage
+                                    //         .replace('{vendorurl}', '<a href="http://beta.hyprweb.com">Click Here</a>')
+                                    //         .replace('{orderdate}', new Date().toISOString().slice(0, 10))
+                                    //         .replace('{orderstatus}', 'Pending')
+                                    //         .replace('{user-name}', UserDetails.f_name)
+                                    //         .replace('{email-logo}', `<a href="http://beta.hyprweb.com/"><img height="80%" width="80%" src="http://beta.hyprweb.com/images/logos/Hypr-Logo.png"/></a>`)
+                                    //         .replace("{socialmedia}",)
+                                    //         .replace('Itsherskill', 'hypr')
+                                    //         .replace('Itsherway', 'hypr')
+                                    //         .replace('http://beta.hyprweb.com', '#')
+                                    //         .replace('http://beta.itsherskill.com/content/SellerPolicy', '#')
+                                    //         .replace('http://beta.itsherskill.com/customer-contactus', '#')
+                                    //         .replace('{copy-right}', '© 2021-2022 hypr.All rights reserved')
+                                    //         .replace('{mpname}', 'hypr')
+                                    //         .replace('{mpname}', 'hypr')
+                                    //         .replace('{mpname}', 'hypr')
+                                    //     // .replace('{email-payment-logo}', `<a href=" "><img src="http://eskillsellerdocs.cstechns.com/SellerDocuments/sellerDocsImg/${email_payment_logo[0].f_image_name}" width="560" alt=""></a>`)
+                                    // };
+                                    // transporter.sendMail(mailOptions, function (error, info) {
+                                    //     if (error) {
+                                    //         console.log(error);
+                                    //     } else {
+                                    //         console.log('Email sent: ' + info.response);
+                                    //     }
+                                    // });
                                 })
                                 var opts = {
                                     TransactionAmount: total_amount,
@@ -1705,7 +1705,9 @@ router.route("/addNewAddress")
                                     AlternativePhone: req.body.AlternativePhone,
                                     country_code: req.body.countryCode,
                                     country: req.body.country,
-                                    isSelected: (result.filter((filter_result)=>filter_result.isSelected ==true ).length > 0 ? false : true)
+                                    isSelected: result[0].f_shipping_Address.length == 0 ? true : false
+                                    
+                                    // (result.filter((filter_result)=>filter_result.isSelected ==true ).length > 0 ? false : true)
                                 }]
                             }
 
@@ -1809,6 +1811,8 @@ router.route("/updateAddress")
                  
 
                     console.log('index',address_id)
+
+                    
                     await UsersSchema.updateOne({ _id: mongoose.Types.ObjectId(_id)}, {
                         $set: {
                             
@@ -1823,12 +1827,24 @@ router.route("/updateAddress")
                                 'f_shipping_Address.$[element].AlternativePhone': req.body.AlternativePhone,
                                 'f_shipping_Address.$[element].country_code': req.body.country_code,
                                 'f_shipping_Address.$[element].country': req.body.country,
-                                'f_shipping_Address.$[element].isSelected': true
+                                'f_shipping_Address.$[element].isSelected':true
                            
                         },                       
                     },{
                         arrayFilters: [ { "element.id":  mongoose.Types.ObjectId(address_id)} ]
                     })
+
+                    await UsersSchema.updateMany({ _id:{$nin:[mongoose.Types.ObjectId(_id)]}}, {
+                        $set: {
+                                              
+                                'f_shipping_Address.$[element].isSelected':false
+                           
+                        },                       
+                    },{
+                        arrayFilters: [ { "element.id":  mongoose.Types.ObjectId(address_id)} ]
+                    })
+
+                    
                     // if (ServiceReview.length > 0) {
                     res.json({
                         status: true,

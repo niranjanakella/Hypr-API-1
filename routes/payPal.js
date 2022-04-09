@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose')
+var mongoose = require('mongoose');
+
 require('../modal/dbContext')
 const userFunctions = require('../shared/functions');
 
@@ -8,52 +9,73 @@ const paypal = require('paypal-rest-sdk');
 
 paypal.configure({
     'mode': 'sandbox', //sandbox or live
-    'client_id': 'AfdCS1POr8r2-8zBgOJSF18PJc8CLLOGJq1t_HzvVStD8CvTqvM9EAFgbnLZ0KjLQ5nswsbnwlGG6-96',
-    'client_secret': 'EMe8ejf_979-NeyxYHwJTsEstWz77WPFuly5npQTqGuKBwSr-RsD6SNZxpDeIL1uXmkIS-cb6bCxfha9'
+    // 'client_id': 'AfdCS1POr8r2-8zBgOJSF18PJc8CLLOGJq1t_HzvVStD8CvTqvM9EAFgbnLZ0KjLQ5nswsbnwlGG6-96',
+    // 'client_secret': 'EMe8ejf_979-NeyxY      HwJTsEstWz77WPFuly5npQTqGuKBwSr-RsD6SNZxpDeIL1uXmkIS-cb6bCxfha9'
+    'client_id': 'AQCApKV7adW0kyMNrVLUrEYaXT5NOfB4LkyLuhygjvlTyswou_xrtmdvdAIOgGtEg6EgcZSXqK84-0Sp',
+    'client_secret': 'EFzba5tSihQ6UPq9BqpmQk6Bhc5TxGUDXgSR4Jb1yymu2R4TEnXdDEj9rxTQsvvKaq5P1UMOgAaGK7R3'
 });
 
 
 
 var amt = null;
+var total_amount = null;
 var _id = null;
 
 
-router.get('/finalCheckout/:amt/:userId', (req, res) => {
+router.get('/finalCheckout/:amt/:userId/:cart', (req, res) => {
 
-    amt = req.params.amt;
+    amt = req.params.amt;    
     _id = req.params.userId
-    console.log(req.params);
+    cart = Buffer.from(req.params.cart, 'base64') ;
+    clean_cart = JSON.parse(cart.toString());
+    item = [];
+    
+    clean_cart.map((product)=>{
+
+    
+        item.push({
+            "name": product.f_variantName,
+            "sku": product.f_productCode,
+            "price": product.f_ProductPrice,
+            "currency": "USD",
+            "quantity": product.f_itemQuantity,
+            
+        })
+
+    });
+
+    console.warn(clean_cart)
+    
+    total_amount = clean_cart.reduce((prev, current) => prev + (current.f_ProductPrice * current.f_itemQuantity), 0);
+    console.warn('amount',total_amount);
     const create_payment_json = {
         "intent": "sale",
         "payer": {
             "payment_method": "paypal"
         },
         "redirect_urls": {
-            "return_url": "http://api.hyprweb.com/success",
-            "cancel_url": "http://api.hyprweb.com/cancel"
+            "return_url": "http://192.168.1.5:9002/success",
+            "cancel_url": "http://192.168.1.5:9002/cancel"
         },
-        "transactions": [{
+        "transactions": [{           
             "item_list": {
-                "items": [{
-                    "name": "Hyprweb APP",
-                    "sku": "001",
-                    "price": amt,
-                    "currency": "USD",
-                    "quantity": 1
-                }]
+                "items": item
             },
             "amount": {
                 "currency": "USD",
-                "total": amt
+                "total": total_amount
             },
             "description": "Hat for the best team ever"
         }]
     };
 
     paypal.payment.create(create_payment_json, function (error, payment) {
+        
         if (error) {
+            
             res.redirect('/cancelledPayment')
         } else {
+            
             for (let i = 0; i < payment.links.length; i++) {
                 if (payment.links[i].rel === 'approval_url') {
                     res.redirect(payment.links[i].href);
@@ -73,12 +95,13 @@ router.get('/success', async (req, res) => {
         "transactions": [{
             "amount": {
                 "currency": "USD",
-                "total": amt
+                "total": total_amount
             }
         }]
     };
 
     paypal.payment.execute(paymentId, execute_payment_json, async function (error, payment) {
+        
         if (error) {
            res.redirect('/cancelledPayment')
         } else {
@@ -132,6 +155,8 @@ router.get('/cancel', (req, res) => res.redirect('/cancelledPayment'));
 
 router.get('/successPayment', async (req, res) => {
     console.log(req.query.q);
+
+    
     res.render('successPayment', {
         payerId: req.query.payerId,
         paymentId: req.query.paymentId

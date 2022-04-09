@@ -1097,6 +1097,42 @@ methods.createOrder = (req, res) => {
     });
 };
 
+
+
+methods.confirmOrder = (req, res) => {
+  const token = req.cookies.auth;
+  const orderId = req.body.orderId;
+
+
+
+  fetch(
+    `https://developers.cjdropshipping.com/api2.0/v1/shopping/order/confirmOrder`,
+    {
+      headers: {
+        "CJ-Access-Token": token,
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify({orderId:orderId}),
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw "error on fetching token";
+      }
+      return response.json();
+    })
+    .then((response) => {
+      return res.send(response);
+    })
+    .catch((err) => {
+      res.send({ response: `something went wrong :< ${err}` });
+      if (err.name === "AbortError") {
+        res.send("Timed out");
+      }
+    });
+};
+
 methods.FreightCalculate = (req, res) => {
   const token = req.cookies.auth;
   const body = req.body.products;

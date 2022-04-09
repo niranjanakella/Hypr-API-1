@@ -79,7 +79,7 @@ router.route("/signup")
 
     .post((req, res, next) => {
         try {
-            console.log(req.body);
+            console.log('body',req.body);
             // return
 
             let fname = userFunctions.santizeInput(req.body.firstName),
@@ -96,6 +96,7 @@ router.route("/signup")
                 age = userFunctions.santizeInput(req.body.age),
                 profilePhoto = req.body.profilePhoto,
                 countryCode = userFunctions.santizeInput(req.body.countryCode),
+                countryName = userFunctions.santizeInput(req.body.countryName),
                 password = userFunctions.santizeInput(req.body.password),
                 confirmPassword = userFunctions.santizeInput(req.body.confirmPassword),
                 ReferCodeBy = userFunctions.santizeInput(req.body.refCode),
@@ -108,7 +109,7 @@ router.route("/signup")
                 // peopleId = userFunctions.santizeInput(req.body.peopleId),
                 msg = "",
                 errorArray = [];
-            console.log(fname, lname, email, phone, uname, country, dob, age, password, confirmPassword);
+            
             // if (fname != null && fname != '' && lname != null && lname != '' && email != null && email != '' && phone != null && phone != ''
             //     && uname != null && uname != '' && country != null && country != '' && dob != null && dob != ''
             //     && age != null && age != '' && password != null && password != '' && confirmPassword != null
@@ -137,7 +138,7 @@ router.route("/signup")
                 msg = "user's age should be grater than 13 years.;";
                 errorArray.push(msg);
             }
-            console.log(errorArray);
+            
             if (errorArray.length == 0) {
                 //check if the email already exists, if yes then this user was invited
                 // userFunctions.checkEmailInvitationExists(email, (result, agencyId) => {
@@ -162,6 +163,7 @@ router.route("/signup")
                     f_username: uname,
                     signupType: signupType,
                     f_country: countryCode,
+                    f_countryName: countryName,
                     social_type: social_type,
                     f_password: password,
                     accessToken: accessToken,
@@ -203,62 +205,66 @@ router.route("/signup")
                             //         msg: 'Could not send email OTP, data saved'
                             //     })
                             // }
-                            return 
+                            //  SEND VERIFY ACCOUNT EMAIL
 
-                              //  SEND VERIFY ACCOUNT EMAIL
+                        
+                            let verification_link = `${process.env.DEV_URL}/user/verifyAccount/${result[0]._id}`;
 
-                              let verification_link = req.protocol + "://" + req.hostname + ':9002/user/' + '/verifyAccount/'+result[0]._id;
-                                
-                              // SEND TO EMAIL
-                              ejs.renderFile('./views/templates/accountVerificationEmail.ejs',{name:`${result[0].f_name} ${result[0].l_name}`,toemail:email,url:verification_link},function(err,data){
-                                console.warn(err);
-                       
-                             // co
-                             // ready for email otp
-                             var mailOptions = {
-                                 from: "Hypr", // sender address
-                                 to: email,                                        
-                                 subject: 'Hypr One Time Password',
-                                 html:      data
-                             }
-                             transporter.sendMail(mailOptions, function (error, info) {
-                                 if (error) {
-                                     console.log('Error: ' + error);
-                                     console.log('Error in forgot pass email sending' + error);
-                                     res.json({
-                                         status: false,
-                                         msg: 'Email not sent',
-                                         code: 'E110'
-                                     });
-                                 } else {
-                                     console.log('Email sent: ' + info.response);
-                                     res.json({
-                                         status: true,
-                                         msg: 'Email sent successfuly',
-                                         code: 'S405'
-                                     });
-                                 }
+                            
+                            
+                            // SEND TO EMAIL
+                            ejs.renderFile('./views/templates/accountVerificationEmail.ejs',{name:`${fname} ${l_name}`,toemail:email,url:verification_link},function(err,data){                                                   
+                                // co
+                                // ready for email otp
+                                var mailOptions = {
+                                    from: "Hypr", // sender address
+                                    to: email,                                        
+                                    subject: 'Hypr Verification  Email',
+                                    html:      data,
+                                    attachments: [{
+                                        filename: 'otp.jpeg',
+                                        path: `${process.env.DEV_URL}/images/otp.jpeg`,
+                                        cid: 'otp' //same cid value as in the html img src
+                                    },{
+                                        filename: 'hypr-logo.png',
+                                        path: `${process.env.DEV_URL}/images/hypr-logo.png`,
+                                        cid: 'logo' //same cid value as in the html img src
+                                    }]
+                                }
+                                transporter.sendMail(mailOptions, function (error, info) {
+                                    if (error) {
+                                        console.log('Error: ' + error);
+                                        console.log('Error in forgot pass email sending' + error);
+                                        res.json({
+                                            status: false,
+                                            msg: 'Email not sent',
+                                            code: 'E110'
+                                        });
+                                    } else {
+                                        console.log('Email sent: ' + info.response);
+                                        // res.json({
+                                        //     status: true,
+                                        //     msg: 'Email sent successfuly',
+                                        //     code: 'S405'
+                                        // });
+
+                                        res.json({
+                                            status: true,
+                                            code: "S405",
+                                            msg: "Successfully Registered. Please check your email first to verify your account.",
+                                            
+                                            
+                                        });
+                                        
+
+
+            
+                                    }
+                                });
                              });
 
-                         });
-
                          
-                            userFunctions.sendMailOtpToVerifyTalentEmailId(insertRes._id, (result) => {
-                                if (result == true) {
-                                    res.json({
-                                        status: true,
-                                        code: "S405",
-                                        msg: "Successfully sent email OTP, data saved",
-                                        id: insertRes._id
-                                    })
-                                } else {
-                                    res.json({
-                                        status: false,
-                                        code: "E110",
-                                        msg: 'Could not send email OTP, data saved'
-                                    })
-                                }
-                            })
+                            
                         } else {
                             res.json({
                                 status: false,
@@ -327,7 +333,7 @@ router.route("/signup")
                         console.warn('REf CODE', isRefCode );
                         if (isRefCode != null) {
                             UsersSchema.findOne({ f_email: email }, async (err1, res1) => {
-                                console.log(res1);
+                                
                                 if (res1 == null) {
                                     UsersSchema.create(options, (err, insertRes) => {
                                         if (err) {
@@ -340,15 +346,67 @@ router.route("/signup")
                                         } else if (insertRes != null && insertRes != '') {
                                             //send email otp
                                             // if (result == true) {
-                                            res.json({
-                                                status: true,
-                                                code: "S405",
-                                                msg: "Successfully sent email OTP, data saved",
-                                                id: insertRes._id,
-                                                otp: 123456,
-                                                accessToken: accessToken
+                                            
 
-                                            })
+
+                                            let verification_link = `${process.env.DEV_URL}/user/verifyAccount/${insertRes._id}`;
+
+                                            console.log('pumasok')
+                            
+                                            // SEND TO EMAIL
+                                            ejs.renderFile('./views/templates/accountVerificationEmail.ejs',{name:`${fname} ${lname}`,toemail:email,url:verification_link},function(err,data){                                                   
+                                                // co
+                                                // ready for email otp
+                                                var mailOptions = {
+                                                    from: "Hypr", // sender address
+                                                    to: email,                                        
+                                                    subject: 'Hypr Verification  Email',
+                                                    html:      data,
+                                                    attachments: [{
+                                                        filename: 'otp.jpeg',
+                                                        path: `${process.env.DEV_URL}/images/otp.jpeg`,
+                                                        cid: 'otp' //same cid value as in the html img src
+                                                    },{
+                                                        filename: 'hypr-logo.png',
+                                                        path: `${process.env.DEV_URL}/images/hypr-logo.png`,
+                                                        cid: 'logo' //same cid value as in the html img src
+                                                    }]
+                                                }
+                                                transporter.sendMail(mailOptions, function (error, info) {
+                                                    if (error) {
+                                                        console.log('Error: ' + error);
+                                                        console.log('Error in forgot pass email sending' + error);
+                                                        res.json({
+                                                            status: false,
+                                                            msg: 'Email not sent',
+                                                            code: 'E110'
+                                                        });
+                                                    } else {
+                                                        console.log('Email sent: ' + info.response);
+                                                        // res.json({
+                                                        //     status: true,
+                                                        //     msg: 'Email sent successfuly',
+                                                        //     code: 'S405'
+                                                        // });
+                
+                                                        res.json({
+                                                            status: true,
+                                                            code: "S405",
+                                                            data:insertRes,
+                                                            msg: "Successfully Registered. Please check your email first to verify your account.",
+                                                            
+                                                            
+                                                        });
+                                                        
+                
+                
+                            
+                                                    }
+                                                });
+                                             });
+
+
+
                                             // } else {
                                             //     res.json({
                                             //         status: false,
@@ -442,7 +500,8 @@ router.route("/verifyAccount/:user_id")
             updatedAt: 0
         }, (err, result) => {
             // CHECK IF VERIFIED ACCOUNT
-            if(result[0].verifiedDate != null){
+            console.warn(result[0].verifiedDate)
+            if(!result[0].verifiedDate ){
                 UsersSchema.findByIdAndUpdate(user_id, {
                     $set: { verifiedDate:  Date.now() }
                 }, {
@@ -465,23 +524,21 @@ router.route("/verifyAccount/:user_id")
                             code: "E130"
                         });
                     } else {
-                        res.json({
-                            status: true,
-                            msg: 'Successfully Verified',
-                            data: ''
-                        });
-        
+
+                        res.render('./templates/verified.ejs');
                         
                     }
                 })
 
             }else{
-                res.json({
-                    status: true,
-                    msg: 'You are already Verified.',
-                    data: ''
-                });
+                
+                // res.json({
+                //     status: true,
+                //     msg: 'You are already Verified.',
+                //     data: ''
+                // });
 
+                res.render('./templates/alreadyVerified.ejs');
             }
 
         });
@@ -664,7 +721,16 @@ router.route("/resendMobileOtp")
                                      from: "Hypr", // sender address
                                      to: email,                                        
                                      subject: 'Hypr One Time Password',
-                                     html:      data
+                                     html:      data,
+                                     attachments: [{
+                                        filename: 'otp.jpeg',
+                                        path: `${process.env.DEV_URL}/images/otp.jpeg`,
+                                        cid: 'otp' //same cid value as in the html img src
+                                    },{
+                                        filename: 'hypr-logo.png',
+                                        path: `${process.env.DEV_URL}/images/hypr-logo.png`,
+                                        cid: 'logo' //same cid value as in the html img src
+                                    }]
                                  }
                                  transporter.sendMail(mailOptions, function (error, info) {
                                      if (error) {
@@ -770,94 +836,158 @@ router.route("/signin")
                             code: "E123"
                         });
                     } else {
-                        //check for password
-                        if (result[0].f_password == password) {
-                            //generate new access token
-                            let key = Date.now() + result[0].email;
-                            let accessToken = sha1(key);
+
+                        //check for verification
+                        if(result[0].verifiedDate == undefined){
                             
-                            let options = {
-                                otp:generateOtp,                                
-                                loginAt: Date.now()
-                            };
-                           
-                            
-                            UsersSchema.findByIdAndUpdate(result[0]._id, {
-                                $set: options
-                            }, {
-                                fields: {
-                                    f_password: 0,
-                                    otp: 0,
-                                    createdAt: 0,
-                                    updatedAt: 0,
-                                    emailVerifiedFlag: 0,
-                                    phoneVerifiedFlag: 0,
-                                    __v: 0
-                                },
-                                new: true
-                            }, (err, updatedDocs) => {
-                                if (err) {
-                                    console.log("Error in user.findByIdAndUpdate login " + err);
-                                    res.json({
-                                        status: false,
-                                        msg: userFunctions.mongooseErrorHandle(err),
-                                        code: "E130"
-                                    });
-                                } else {
-
-                                
-
-                                    // SEND TO EMAIL
-                                    ejs.renderFile('./views/templates/otpEmail.ejs',{name:`${result[0].f_name} ${result[0].l_name}`,toemail:email,otp:generateOtp},function(err,data){
-                                       console.warn(err);
-                              
-                                    // co
-                                    // ready for email otp
-                                    var mailOptions = {
-                                        from: "Hypr", // sender address
-                                        to: email,                                        
-                                        subject: 'Hypr One Time Password',
-                                        html:      data
-                                    }
-                                    transporter.sendMail(mailOptions, function (error, info) {
-                                        if (error) {
-                                            console.log('Error: ' + error);
-                                            console.log('Error in forgot pass email sending' + error);
-                                            res.json({
-                                                status: false,
-                                                msg: 'Email not sent',
-                                                code: 'E110'
-                                            });
-                                        } else {
-                                            console.log('Email sent: ' + info.response);
-                                            res.json({
-                                                status: true,
-                                                msg: 'Email sent successfuly',
-                                                code: 'S405'
-                                            });
-                                        }
-                                    });
-
-                                });
-
-
-                              
+                            let verification_link = `${process.env.DEV_URL}/user/verifyAccount/${result[0]._id}`;
 
                             
-
-                                    res.json({
-                                        status: true,
-                                        msg: 'User data fetched successfully..',
-                                        data: updatedDocs
-                                    });
+                            console.warn(verification_link);
+                            // SEND TO EMAIL
+                            ejs.renderFile('./views/templates/accountVerificationEmail.ejs',{name:`${result[0].f_name} ${result[0].l_name}`,toemail:email,url:verification_link},function(err,data){                                                   
+                                // co
+                                // ready for email otp
+                                var mailOptions = {
+                                    from: "Hypr", // sender address
+                                    to: email,                                        
+                                    subject: 'Hypr Verification  Email',
+                                    html:      data,
+                                    attachments: [{
+                                        filename: 'verification.jpg',
+                                        path: `${process.env.DEV_URL}/images/verification.jpg`,
+                                        cid: 'verification' //same cid value as in the html img src
+                                    },{
+                                        filename: 'hypr-logo.png',
+                                        path: `${process.env.DEV_URL}/images/hypr-logo.png`,
+                                        cid: 'logo' //same cid value as in the html img src
+                                    }]
                                 }
-                            })
-                        } else {
-                            res.json({
-                                status: false,
-                                msg: "Incorrect email or password entered !",
-                                code: "E123"
-                            });
+                                transporter.sendMail(mailOptions, function (error, info) {
+                                    if (error) {
+                                        console.log('Error: ' + error);
+                                        console.log('Error in forgot pass email sending' + error);
+                                        res.json({
+                                            status: false,
+                                            msg: 'Email not sent',
+                                            code: 'E110'
+                                        });
+                                    } else {
+                                        console.log('Email sent: ' + info.response);
+                                    
+
+                                        res.json({
+                                            status: false,
+                                            msg: "You are not yet verified. Please check your email.",
+                                            data:result,
+                                            code: "E123"
+                                        });
+            
+                                    }
+                                });
+                             });
+
+                             
+                         
+                        }else{            
+
+                                //check for password
+                                if (result[0].f_password == password)  {
+                                    //generate new access token
+                                    let key = Date.now() + result[0].email;
+                                    let accessToken = sha1(key);
+                                    
+                                    let options = {
+                                        otp:generateOtp,                                
+                                        loginAt: Date.now()
+                                    };
+                                
+                                    
+                                    UsersSchema.findByIdAndUpdate(result[0]._id, {
+                                        $set: options
+                                    }, {
+                                        fields: {
+                                            f_password: 0,
+                                            otp: 0,
+                                            createdAt: 0,
+                                            updatedAt: 0,
+                                            emailVerifiedFlag: 0,
+                                            phoneVerifiedFlag: 0,
+                                            __v: 0
+                                        },
+                                        new: true
+                                    }, (err, updatedDocs) => {
+                                                if (err) {
+                                                    console.log("Error in user.findByIdAndUpdate login " + err);
+                                                    res.json({
+                                                        status: false,
+                                                        msg: userFunctions.mongooseErrorHandle(err),
+                                                        code: "E130"
+                                                    });
+                                                } else {
+
+                                                
+
+                                                    // SEND TO EMAIL
+                                                    
+                                                            ejs.renderFile('./views/templates/otpEmail.ejs',{name:`${result[0].f_name} ${result[0].l_name}`,toemail:email,otp:generateOtp},function(err,data){
+                                                            console.warn(err);
+                                                    
+                                                            // co
+                                                            // ready for email otp
+                                                            var mailOptions = {
+                                                                from: "Hypr", // sender address
+                                                                to: email,                                        
+                                                                subject: 'Hypr One Time Password',
+                                                                html:      data,
+                                                                attachments: [{
+                                                                    filename: 'otp.jpeg',
+                                                                    path: `${process.env.DEV_URL}/images/otp.jpeg`,
+                                                                    cid: 'otp' //same cid value as in the html img src
+                                                                },{
+                                                                    filename: 'hypr-logo.png',
+                                                                    path: `${process.env.DEV_URL}/images/hypr-logo.png`,
+                                                                    cid: 'logo' //same cid value as in the html img src
+                                                                }]
+                                                            }
+                                                            transporter.sendMail(mailOptions, function (error, info) {
+                                                                if (error) {
+                                                                    console.log('Error: ' + error);
+                                                                    console.log('Error in forgot pass email sending' + error);
+                                                                    res.json({
+                                                                        status: false,
+                                                                        msg: 'Email not sent',
+                                                                        code: 'E110'
+                                                                    });
+                                                                } else {
+                                                                    console.log('Email sent: ' + info.response);                                                                 
+                                                                    
+                                                                    res.json({
+                                                                        status: true,
+                                                                        msg: 'OTP Email sent successfuly',
+                                                                        code: 'S405',
+                                                                        data: updatedDocs
+                                                                    });
+                                                                }
+                                                            });
+
+                                                        });
+
+
+                                            
+
+                                            
+
+                                                   
+                                                }
+                                        })
+                                    } else {
+                                        res.json({
+                                            status: false,
+                                            msg: "Incorrect email or password entered !",
+                                            code: "E123"
+                                        });
+                                    }
                         }
                     }
                 })
