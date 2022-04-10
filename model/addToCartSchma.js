@@ -37,7 +37,8 @@ require('../shared/variables');
   status: Boolean,
   createdAt: Date,
   updatedAt: Date,
-  f_freightCalculation:Array
+  f_freightCalculation:Array,
+  f_shippingAddress:Array
   //  { collection: "t_product" });
   },{collection:"t_CartSummary"});
 

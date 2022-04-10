@@ -80,6 +80,7 @@ router.route("/addToShoppingCart")
                                     "f_couponType": "",
                                     "f_couponUse": false,
                                     "f_discount": 0,
+                                    "f_shippingAddress": req.body.shippingAddress,
                                     "f_freightCalculation": req.body.freightCalculation,
                                 }
 
