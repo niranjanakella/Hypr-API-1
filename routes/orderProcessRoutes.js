@@ -58,6 +58,7 @@ router.route("/addToShoppingCart")
                                 var options = {
                                     // "f_sellerId": ProductDetails.f_sellerId,
                                     "f_ProductId": req.body.ProductId,
+                                    "f_VariantId": req.body.VariantId,
                                     "f_ProductPrice":req.body.product_price,// ProductDetails.f_product_price,
                                     "f_OfferPrice":req.body.product_price,// ProductDetails.f_product_offer_price,
                                     "f_productCode": req.body.product_code,
@@ -135,6 +136,162 @@ router.route("/addToShoppingCart")
 
 
     })
+
+// Update Shopping Cart
+router.route("/updateShoppingCart")
+    .get((req, res, next) => {
+        res.json({
+            status: false,
+            code: "E131"
+        })
+    }).post(async (req, res) => {
+        //var categoryType = await catTypeSchema.find();
+        console.log(req.body);
+        try {
+            let _id = userFunctions.santizeInput(req.body.userId);
+            let ProductId = userFunctions.santizeInput(req.body.ProductId);            
+            let productIdToBeDeleted = userFunctions.santizeInput(req.body.productIdToBeDeleted);            
+
+            if (_id != null) {
+                
+                UsersSchema.find({
+                    _id: mongoose.Types.ObjectId(_id),
+                }, {
+                    __v: 0,
+                    createdAt: 0,
+                    password: 0,
+                    updatedAt: 0
+                }, (err1, result) => {
+                    // console.log(result);
+                    if (err1) {
+                        console.log("Error in user.find login " + err1);
+                        res.json({
+                            status: false,
+                            msg: userFunctions.mongooseErrorHandle(err1),
+                            code: "E130"
+                        });
+                    } else if (result == null || result == undefined || result == '') {
+                        res.json({
+                            status: false,
+                            msg: "There is no account associated with this Userid, Pls login first!",
+                            code: "E123"
+                        });
+                    } else {
+                        // DELETE PREVIOUS PRODUCT
+                        CartSchema.find({ f_VariantId:productIdToBeDeleted }).remove(function(err_remove){
+
+                        if(!err_remove){
+
+                        CartSchema.find({f_VariantId: req.body.VariantId, f_buyerId: _id }, async (err2, result1) => {                            
+                            console.log('length',result1.length);
+                            // return
+                            // res.send(result)
+                            if(!err2){
+
+
+                            
+                            if (result1.length == 0) {
+                                
+                                var UserDetails = await UsersSchema.findOne({ _id: _id });
+                                var options = {
+                                    // "f_sellerId": ProductDetails.f_sellerId,
+                                    "f_ProductId": req.body.ProductId,
+                                    "f_VariantId": req.body.VariantId,
+                                    "f_ProductPrice":req.body.product_price,// ProductDetails.f_product_price,
+                                    "f_OfferPrice":req.body.product_price,// ProductDetails.f_product_offer_price,
+                                    "f_productCode": req.body.product_code,
+                                    // "f_ServiceName": ProductDetails.f_productname,
+                                    // "f_sellerName": ProductDetails.f_sellerName,
+                                    "f_ProductImg1":req.body.product_image,
+                                    // "f_categoryTypeName": ProductDetails.f_categoryTypeName,
+                                    // "f_categoryTypeId": ProductDetails.f_categoryTypeId,
+                                    // "f_categoryName": ProductDetails.f_catLevel1Name,
+                                    // "f_categoryId": ProductDetails.f_catLevel1,
+                                    
+                                    "f_itemQuantity": 1,
+                                    "f_buyerId": req.body.userId,
+                                    "f_buyerName": UserDetails.f_name + ' ' + UserDetails.l_name,
+                                    "f_totalAmount": parseInt(req.body.product_price),
+                                    "f_variantName" : req.body.variantName,
+                                    "f_createdDate": new Date,
+                                    "f_coupon": "",
+                                    "f_couponPrice": 0,
+                                    "f_couponType": "",
+                                    "f_couponUse": false,
+                                    "f_discount": 0,
+                                    "f_shippingAddress": req.body.shippingAddress,
+                                    "f_freightCalculation": req.body.freightCalculation,
+                                }
+
+                                // remove previous item
+                                
+
+                                CartSchema.create(options, (err3, insertRes) => {
+                                    console.warn("insertRes",userFunctions.mongooseErrorHandle(err3))
+                                    if (err3) {
+                                        console.log("Err in inserting add to cart " + err3);
+                                        res.json({
+                                            status: false,
+                                            code: "E111",
+                                            msg: userFunctions.mongooseErrorHandle(err3)
+                                        })
+                                    } else {
+                                        //send email otp
+                                        // if (result == true) {
+                                            
+                                        res.json({
+                                            status: true,                                            
+                                            msg: "Item updated in your cart!",
+                                            id: req.body.userId
+                                        })
+
+                                        console.warn({
+                                            status: true,                                            
+                                            msg: "Item updated in your cart!",
+                                            id: req.body.userId
+                                        })
+                                    }
+                                })
+                            }
+                            else {
+                                console.log("Item already exists in the cart!");
+                                res.json({
+                                    status: false,
+                                    msg: "Item already exists in the cart!",
+                                    data: []
+                                });
+                            }
+                        }else{
+                            console.log(err2);
+                        }
+
+                        })
+
+                            }
+
+
+
+                        });
+                      
+                    }
+                })
+
+            }
+
+
+
+        } catch (e) {
+            console.log("Catch in usersignup api " + e);
+            res.json({
+                status: false,
+                code: "E109",
+                msg: genericErrorMessage
+            })
+        }
+
+
+    })
+
 
 router.route("/CartQuantityIncrease")
     .get((req, res, next) => {

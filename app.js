@@ -15,6 +15,7 @@ var orderProcessRouter = require('./routes/orderProcessRoutes');
 var socialRouter = require('./routes/socialRoutes/socialPost.routes');
 var groupRouter = require('./routes/socialRoutes/group.routes');
 var payPal = require('./routes/payPal');
+var stripe = require('./routes/stripe');
 var cjRouter = require('./routes/api/cj');
 require('./shared/variables')
 // const catTypeSchema = require('./model/catTypeModel')
@@ -107,6 +108,7 @@ app.use('/', indexRouter);
 app.use('/', productRouter);
 app.use('/', orderProcessRouter)
 app.use('/', payPal)
+app.use('/', stripe)
 app.use('/', cjRouter)
 app.use('/user', accountRouter)
 app.use('/users', usersRouter);

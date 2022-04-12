@@ -10,6 +10,7 @@ require('../shared/variables');
   const addToCartNewSchema = new mongoose.Schema({
   f_sellerId: String,
   f_ProductId: String,
+  f_VariantId: String,
   f_ProductPrice: String,
   f_OfferPrice: String,
   f_ProductPriceCny: String,
