@@ -11,30 +11,23 @@ const stripe = require('stripe')(stripeAPI.STRIPE_SECRET_KEY);
 
 
 router.post('/stripeCheckout', async (req, res) => {
+  let lineItemsPayload = req.body.lineItemsPayload;
 
+  let orderId = req.body.lineItemsPayload;
   try{
     const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: 'T-shirt',
-            },
-            unit_amount: 2000,
-          },
-          quantity: 1,
-        },
-      ],
+      line_items: lineItemsPayload,
       mode: 'payment',
-      success_url: 'https://example.com/success',
-      cancel_url: 'https://example.com/cancel',
+      success_url: `${process.env.DEV_URL}/success?sc_checkout=success&paymentId=${orderId}&payerId=${orderId}`,
+      cancel_url: `${process.env.DEV_URL}/cancel?sc_checkout=cancel`,
     });
     
-    console.warn('checkout session', session);
+    
+    // res.redirect(`${process.env.DEV_URL}/successPayment?checkout=success`);
+
     res.json({
         status:true,
-        checkoutSessionId:session.id
+        checkoutSessionId:session.id,        
     })
 
   }catch(error){

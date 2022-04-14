@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const { dns } = require("googleapis/build/src/apis/dns");
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -9,37 +10,29 @@ app.use(bodyParser.raw());
 const methods = {};
 
 var Shipping = function (
-  zip,
-  code,
-  country,
-  prov,
-  city,
+  fccode,
+  logistic,
+  products,
   address,
+  city,
+  country,
+  sccode,
   name,
   phone,
-  remark,
-  fromCountryCode,
-  logisticName,
-  products
+  prov,
+  zip
 ) {
-  this.shippingZip = zip;
-  this.shippingCountryCode = code;
-  this.shippingCountry = country;
-  this.shippingProvince = prov;
-  this.shippingCity = city;
+  this.fromCountryCode = fccode;
+  this.logisticName = logistic;
+  this.products = products;
   this.shippingAddress = address;
+  this.shippingCity = city;
+  this.shippingCountry = country;
+  this.shippingCountryCode = sccode;
   this.shippingCustomerName = name;
   this.shippingPhone = phone;
-  this.remark = remark;
-  this.fromCountryCode = fromCountryCode; // select
-  this.logisticName = logisticName;
-  this.products = products;
-};
-
-var Products = function (vid, quantity, sname = null) {
-  this.vid = vid;
-  this.quantity = quantity;
-  if (_checkKeyValuePair(sname)) this.shippingName = sname;
+  this.shippingProvince = prov;
+  this.shippingZip = zip;
 };
 
 var Freight = function (sccode = "CN", eccode, products) {
@@ -66,7 +59,7 @@ var CountryObject = function (name, code) {
   this.code = code;
 };
 
-var Logistics = function() {
+var Logistics = function () {
   const logisticArray = logisticsArray();
   const dayArray = daysArray();
 
@@ -80,7 +73,7 @@ var Logistics = function() {
   this.data = logistics;
 };
 
-var LogisticsObject = function(name, days) {
+var LogisticsObject = function (name, days) {
   this.name = name;
   this.days = days;
 };
@@ -218,7 +211,7 @@ function logisticsArray() {
     "CJ Fulfillment Shopee Local",
     "CJ Changhe",
     "CJPacket SFE US",
-    "CJPacket  MY Sensitive"
+    "CJPacket  MY Sensitive",
   ];
 }
 
@@ -355,7 +348,7 @@ function daysArray() {
     "2-5",
     "10-15",
     "10-25",
-    "14-30"
+    "14-30",
   ];
 }
 
@@ -870,14 +863,12 @@ function countryCodeArray() {
 }
 
 methods.getCountryCode = (req, res) => {
-
   let response = new Country();
 
   res.send(response);
 };
 
 methods.getLogistics = (req, res) => {
-
   let response = new Logistics();
 
   res.send(response);
@@ -932,7 +923,6 @@ methods.getProducts = (req, res) => {
     }
   )
     .then((response) => {
-      console.warn(response);
       if (!response.ok) {
         throw "error on fetching token";
       }
@@ -1006,69 +996,62 @@ methods.listOrder = (req, res) => {
   const token = req.cookies.auth;
   const search = _getParamString(req);
 
-  res.send({ response: search });
-  // req.query.pageNum
-  // req.query.pageSize
-  // if(req.query.pageNum) {
-
-  // }
-
-  // fetch(
-  //   `https://developers.cjdropshipping.com/api2.0/v1/shopping/order/list?pageNum=${pageNum}&pageSize=${pageSize}`,
-  //   {
-  //     headers: {
-  //       "CJ-Access-Token": token,
-  //     },
-  //     method: "GET",
-  //   }
-  // )
-  //   .then((response) => {
-  //     if (!response.ok) {
-  //       throw "error on fetching token";
-  //     }
-  //     return response.json();
-  //   })
-  //   .then((response) => {
-  //     return res.send(response);
-  //   })
-  //   .catch((err) => {
-  //     res.send({"response":"something went wrong :<"});
-  //     if (err.name === "AbortError") {
-  //       res.send("Timed out");
-  //     }
-  //   });
+  fetch(
+    `https://developers.cjdropshipping.com/api2.0/v1/shopping/order/list?${search}`,
+    {
+      headers: {
+        "CJ-Access-Token": token,
+      },
+      method: "GET",
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw "error on fetching token";
+      }
+      return response.json();
+    })
+    .then((response) => {
+      return res.send(response);
+    })
+    .catch((err) => {
+      res.send({ response: "something went wrong :<" });
+      if (err.name === "AbortError") {
+        res.send("Timed out");
+      }
+    });
 };
 
 methods.createOrder = (req, res) => {
   const token = req.cookies.auth;
   const body = req.body.products;
   const len = body.length;
-  console.warn(req.body);
+
   let products = [];
 
   for (let i = 0; i < len; i++) {
-    products[i] = new Products(
-      body[i].vid,
-      body[i].quantity,
-      body[i].shippingName
-    );
+    products[i] = {
+      quantity: body[i].quantity,
+      sellPrice: body[i].sellPrice,
+      shippingName: body[i].shippingName,
+      vid: body[i].vid,
+    };
   }
-
+  console.warn('logistic',req.body);
   let shipping = new Shipping(
-    req.body.zip,
-    req.body.code,
-    req.body.country,
-    req.body.province,
-    req.body.city,
-    req.body.address,
-    req.body.name,
-    req.body.contact,
-    req.body.remark,
-    req.body.ccode,
+    req.body.fccode,
     req.body.logistic,
-    products
+    products,
+    req.body.address,
+    req.body.city,
+    req.body.country,
+    req.body.sccode,
+    req.body.name,
+    req.body.phone,
+    req.body.province,
+    req.body.zip
   );
-  console.warn(token)
+
   fetch(
     `https://developers.cjdropshipping.com/api2.0/v1/shopping/order/createOrder`,
     {
@@ -1081,6 +1064,7 @@ methods.createOrder = (req, res) => {
     }
   )
     .then((response) => {
+
       if (!response.ok) {
         throw "error on fetching token";
       }
@@ -1090,42 +1074,7 @@ methods.createOrder = (req, res) => {
       return res.send(response);
     })
     .catch((err) => {
-      res.send({ response: `something went wrong :< ${err}` });
-      if (err.name === "AbortError") {
-        res.send("Timed out");
-      }
-    });
-};
-
-
-
-methods.confirmOrder = (req, res) => {
-  const token = req.cookies.auth;
-  const orderId = req.body.orderId;
-
-
-
-  fetch(
-    `https://developers.cjdropshipping.com/api2.0/v1/shopping/order/confirmOrder`,
-    {
-      headers: {
-        "CJ-Access-Token": token,
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify({orderId:orderId}),
-    }
-  )
-    .then((response) => {
-      if (!response.ok) {
-        throw "error on fetching token";
-      }
-      return response.json();
-    })
-    .then((response) => {
-      return res.send(response);
-    })
-    .catch((err) => {
+   
       res.send({ response: `something went wrong :< ${err}` });
       if (err.name === "AbortError") {
         res.send("Timed out");
@@ -1134,14 +1083,13 @@ methods.confirmOrder = (req, res) => {
 };
 
 methods.FreightCalculate = (req, res) => {
-  const token = req.cookies.auth;
   const body = req.body.products;
   const len = body.length;
 
   let products = [];
 
   for (let i = 0; i < len; i++) {
-    products[i] = new Products(body[i].vid, body[i].quantity);
+    products[i] = { quantity: body[i].quantity, variantSku: body[i].sku };
   }
 
   let freight = new Freight(req.body.sccode, req.body.eccode, products);
@@ -1172,4 +1120,220 @@ methods.FreightCalculate = (req, res) => {
       }
     });
 };
+
+methods.getOrder = (req, res) => {
+  const token = req.cookies.auth;
+  const search = _getParamString(req);
+
+  fetch(
+    `https://developers.cjdropshipping.com/api2.0/v1/shopping/order/getOrderDetail?${search}`,
+    {
+      headers: {
+        "CJ-Access-Token": token,
+      },
+      method: "GET",
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw "error on fetching token";
+      }
+      return response.json();
+    })
+    .then((response) => {
+      return res.send(response);
+    })
+    .catch((err) => {
+      res.send({ response: "something went wrong :<" });
+      if (err.name === "AbortError") {
+        res.send("Timed out");
+      }
+    });
+};
+
+methods.deleteOrder = (req, res) => {
+  const token = req.cookies.auth;
+  const search = _getParamString(req);
+
+  fetch(
+    `https://developers.cjdropshipping.com/api2.0/v1/shopping/order/deleteOrder?${search}`,
+    {
+      headers: {
+        "CJ-Access-Token": token,
+      },
+      method: "DELETE",
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw "error on fetching token";
+      }
+      return response.json();
+    })
+    .then((response) => {
+      return res.send(response);
+    })
+    .catch((err) => {
+      res.send({ response: "something went wrong :<" });
+      if (err.name === "AbortError") {
+        res.send("Timed out");
+      }
+    });
+};
+
+methods.confirmOrder = (req, res) => {
+  const token = req.cookies.auth;
+  const orderId = req.body.orderId;
+
+  fetch(
+    `https://developers.cjdropshipping.com/api2.0/v1/shopping/order/confirmOrder`,
+    {
+      headers: {
+        "CJ-Access-Token": token,
+        "Content-Type": "application/json",
+      },
+      method: "PATCH",
+      body: JSON.stringify({ orderId: orderId }),
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw "error on fetching token";
+      }
+      return response.json();
+    })
+    .then((response) => {
+      return res.send(response);
+    })
+    .catch((err) => {
+      res.send({ response: "something went wrong :<" });
+      if (err.name === "AbortError") {
+        res.send("Timed out");
+      }
+    });
+};
+
+methods.trackingDetails = (req, res) => {
+  const search = _getParamString(req);
+
+  fetch(
+    `https://developers.cjdropshipping.com/api2.0/v1/logistic/getTrackInfo?${search}`,
+    {
+      method: "GET",
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw "error on fetching token";
+      }
+      return response.json();
+    })
+    .then((response) => {
+      return res.send(response);
+    })
+    .catch((err) => {
+      res.send({ response: "something went wrong :<" });
+      if (err.name === "AbortError") {
+        res.send("Timed out");
+      }
+    });
+};
+
+methods.productSync = (req, res) => {
+  const token = req.cookies.auth;
+  const search = _getParamString(req);
+
+  fetch(
+    `https://developers.cjdropshipping.com/api2.0/v1/product/list?${search}`,
+    {
+      headers: {
+        "CJ-Access-Token": token,
+      },
+      method: "GET",
+    }
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw "error on fetching token";
+      }
+      return response.json();
+    })
+    .then((response) => {
+      const productList = response.data.list;
+
+      for (let i = 0, j = productList.length; i < j; i++) {
+        let y = i;
+        db.collection("t_api_products").updateOne(
+          {
+            pid: productList[i].pid,
+          },
+          {
+            $setOnInsert: {
+              pid: productList[i].pid,
+              product_information: productList[i],
+              page_number: response.data.pageNum.toString(),
+              category_name: productList[i].categoryName,
+              product_name: productList[i].productNameEn,
+              product_sku: productList[i].productSku,
+              price: productList[i].sellPrice.toString(),
+              product_add_price: "0",
+              cache_key: `cj-${response.data.pageNum.toString()}-${++y}`,
+              shop: "cj",
+            },
+          },
+          { upsert: true }
+        );
+      }
+      return res.send({ reponse: "success" });
+    })
+    .catch((err) => {
+      res.send({ response: "something went wrong :<" });
+      if (err.name === "AbortError") {
+        res.send("Timed out");
+      }
+    });
+};
+
+methods.getSyncProducts = async (req, res) => {
+  const max = await db
+    .collection("t_api_products")
+    .find()
+    .sort({ page_number: -1 })
+    .limit(1);
+
+  await max.forEach((doc) => {
+    res.send(doc.page_number);
+  });
+};
+
+methods.searchProducts = async (req, res) => {
+  const searchValue = req.body.searchValue;
+  const skips = req.body.skip == undefined ? 0 : req.body.skip;
+  const results = [];
+  const query = await db
+    .collection("t_api_products")
+    .find({ $text: { $search: `/${searchValue}/` } })
+    .limit(20)
+    .skip(skips)
+    .project({ product_information: 1, _id: 0 });
+
+  query.toArray(function (err, docs) {
+    docs.forEach((documents) => {
+      results.push(documents.product_information);
+    });
+
+    const format = {
+      code: 200,
+      result: true,
+      message: "Success",
+      data: {
+        list: results,
+      },
+    };
+
+    if (err) return res.status(500).send({ error: err });
+    res.json(format);
+  });
+};
+
 module.exports = methods;

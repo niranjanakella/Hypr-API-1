@@ -1,6 +1,4 @@
 const app = require('@forkjs/group-router');
-const session = require('express-session');
-const cookieParser = require('cookie-parser');
 
 const ApiController = require('./../controllers/cj/APIController');
 
@@ -23,6 +21,10 @@ const isAuth = (req, res, next) => {
     .then((response) => {
         if (!response.data.accessToken) return res.status(401).send("Access denied");
 
+        // if (document.cookie.split(';').some((item) => item.trim().startsWith('auth='))) {
+        //     res.clearCookie('auth');
+        // }
+
         if(response.data.accessToken) {
             res.cookie('auth', response.data.accessToken);
             next();
@@ -37,6 +39,7 @@ const isAuth = (req, res, next) => {
   
 //URL mapping
 app.group("/cj/api/v1", () => {
+    app.post("/search-products", ApiController.searchProducts);
     app.router.use(isAuth);
     app.post("/get-token", ApiController.getToken);
     // products and variants
@@ -46,15 +49,20 @@ app.group("/cj/api/v1", () => {
 
     // shopping
     app.post("/create-order", ApiController.createOrder);
-    app.post("/confirm-order", ApiController.confirmOrder);
     app.get("/list-order", ApiController.listOrder);
+    app.get("/fetch-order", ApiController.getOrder);
+    app.post("/delete-order", ApiController.deleteOrder);
+    app.post("/confirm-order", ApiController.confirmOrder);
 
     // logistics
     app.post("/freight-calculate", ApiController.FreightCalculate);
     app.get("/countries", ApiController.getCountryCode);
     app.get("/logistics", ApiController.getLogistics);
+    app.get("/tracking-details", ApiController.trackingDetails);
 
-    
+    app.post("/products-sync", ApiController.productSync);
+    app.post("/get-sync-products", ApiController.getSyncProducts);
+
 });
 
 module.exports = app.router;
